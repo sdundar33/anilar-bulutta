@@ -9,10 +9,10 @@ st.set_page_config(
     page_icon="📸"
 )
 
-# --- 2. GÖRSEL TASARIM (CSS HACK) ---
+# --- 2. GÖRSEL TASARIM (CSS) ---
 st.markdown("""
 <style>
-    .block-container { padding-top: 6rem !important; }
+    .block-container { padding-top: 4rem !important; }
     .stApp { background-color: #FFFFFF !important; }
 
     .lilia-title { 
@@ -20,17 +20,12 @@ st.markdown("""
         font-size: 34px !important; 
         font-weight: 700 !important; 
         text-align: center !important; 
-        margin-bottom: 40px !important;
+        margin-bottom: 20px !important;
         font-family: serif !important;
     }
 
-    /* DOSYA SEÇME BUTONU METNİNİ DEĞİŞTİRME (HACK) */
-    /* Mevcut "Browse files" yazısını görünmez yapıyoruz */
-    [data-testid="stFileUploader"] section button span {
-        display: none !important;
-    }
-    
-    /* Yerine "Hatıraları Seç" yazısını koyuyoruz */
+    /* DOSYA SEÇME BUTONU HACK */
+    [data-testid="stFileUploader"] section button span { display: none !important; }
     [data-testid="stFileUploader"] section button::after {
         content: "Hatıraları Seç" !important;
         visibility: visible !important;
@@ -44,7 +39,6 @@ st.markdown("""
         padding: 20px !important;
     }
 
-    /* Seçme butonu tasarımı */
     [data-testid="stFileUploader"] section button {
         background-color: #E8DAEF !important;
         color: #4A235A !important;
@@ -53,7 +47,7 @@ st.markdown("""
         padding: 5px 15px !important;
     }
 
-    /* ANA DÜĞME: Günü Ölümsüzleştir */
+    /* ANA DÜĞME */
     div.stButton > button {
         background-color: #9B59B6 !important; 
         color: #FFFFFF !important; 
@@ -63,12 +57,8 @@ st.markdown("""
         padding: 18px !important;
         font-weight: bold !important;
         font-size: 22px !important;
-        margin-top: 20px !important;
+        margin-top: 10px !important;
         box-shadow: 0px 4px 15px rgba(155, 89, 182, 0.2) !important;
-    }
-
-    div.stButton > button:hover {
-        background-color: #AF7AC5 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -76,8 +66,11 @@ st.markdown("""
 # --- 3. BAŞLIK ---
 st.markdown('<div class="lilia-title">📸 Anılar Bulutta</div>', unsafe_allow_html=True)
 
-# --- 4. TEKNİK AYARLAR ---
-# Apps Script URL'ni buraya yapıştırmayı unutma
+# --- 4. DURUM BİLGİSİ KONTEYNERI (YENİ) ---
+# Yükleme çubuğu ve başarı mesajı burada, en üstte görünecek.
+status_container = st.container()
+
+# --- 5. TEKNİK AYARLAR ---
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw9mHDx-NZJUhzKwRLRIpvXv9hEtp_RJztM1JOF6LViPvJMGB9qjXYMPttDMl72gAI/exec"
 
 def upload_to_drive_direct(file):
@@ -91,19 +84,25 @@ def upload_to_drive_direct(file):
     response = requests.post(WEB_APP_URL, data=payload)
     return response.text
 
-# --- 5. ARAYÜZ ---
-# Buradaki yazı sadece kutunun üstünde görünür
+# --- 6. ARAYÜZ ---
 uploaded_files = st.file_uploader("En Güzel Kareleri Seç", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True, label_visibility="collapsed")
 
 if st.button("Günü Ölümsüzleştir"):
     if uploaded_files:
-        progress_bar = st.progress(0)
-        try:
-            for i, uploaded_file in enumerate(uploaded_files):
-                result = upload_to_drive_direct(uploaded_file)
-                progress_bar.progress((i + 1) / len(uploaded_files))
-            st.success("Tüm anılar Lilia arşivine başarıyla eklendi! ✨")
-        except Exception as e:
-            st.error(f"Bir hata oluştu: {e}")
+        # Durum mesajlarını en üstteki konteynere yazdırıyoruz
+        with status_container:
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            
+            try:
+                for i, uploaded_file in enumerate(uploaded_files):
+                    status_text.text(f"Yükleniyor: {uploaded_file.name}...")
+                    upload_to_drive_direct(uploaded_file)
+                    progress_bar.progress((i + 1) / len(uploaded_files))
+                
+                status_text.empty() # "Yükleniyor" yazısını siler
+                st.success(f"Harika! {len(uploaded_files)} hatıra Lilia arşivine eklendi. ✨")
+            except Exception as e:
+                st.error(f"Bir hata oluştu: {e}")
     else:
         st.warning("Lütfen önce hatıraları seçin.")
