@@ -10,11 +10,11 @@ st.set_page_config(
 )
 
 # --- 2. GÖRSEL TASARIM (CSS) ---
-# Buton rengini belirgin şekilde açtık ve yazı rengini koyulaştırdık.
 st.markdown("""
 <style>
+    /* Sayfa içeriğini tepeden 5 satır kadar aşağı indiriyoruz */
     .block-container {
-        padding-top: 2rem;
+        padding-top: 5rem;
     }
     .stApp { 
         background-color: #FFFFFF; 
@@ -26,12 +26,13 @@ st.markdown("""
         font-size: 36px; 
         font-weight: 700; 
         text-align: center; 
-        margin-bottom: 30px;
+        margin-top: 20px; /* Başlığın üstüne ekstra boşluk */
+        margin-bottom: 40px;
     }
-    /* Buton Tasarımı: Çok açık lila arka plan, koyu mor yazı */
+    /* Buton Tasarımı: Açık lila arka plan, koyu mor yazı */
     .stButton>button { 
-        background-color: #E8DAEF; /* Çok açık, ferah bir lila */
-        color: #4A235A; /* Koyu mor yazı (okunabilirlik için) */
+        background-color: #E8DAEF; 
+        color: #4A235A; 
         border: 2px solid #7D3C98; 
         border-radius: 30px; 
         width: 100%; 
@@ -41,7 +42,7 @@ st.markdown("""
         transition: 0.3s;
     }
     .stButton>button:hover { 
-        background-color: #D2B4DE; /* Üzerine gelince biraz daha koyulaşır */
+        background-color: #D2B4DE; 
         color: #4A235A;
         border-color: #4A235A;
     }
@@ -74,7 +75,7 @@ def upload_to_drive_direct(file):
 # --- 5. ARAYÜZ ---
 uploaded_files = st.file_uploader("Fotoğrafları seçin veya sürükleyin", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
 
-st.write("") # Boşluk
+st.write("") 
 
 if st.button("Fotoğrafları Arşive Gönder"):
     if uploaded_files:
