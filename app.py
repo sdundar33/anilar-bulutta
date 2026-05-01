@@ -9,10 +9,9 @@ st.set_page_config(
     page_icon="📸"
 )
 
-# --- 2. GÖRSEL TASARIM (KESİN ÇÖZÜM CSS) ---
+# --- 2. GÖRSEL TASARIM (CSS) ---
 st.markdown("""
 <style>
-    /* Sayfayı aşağı kaydırıyoruz */
     .block-container {
         padding-top: 6rem !important;
     }
@@ -21,7 +20,6 @@ st.markdown("""
         background-color: #FFFFFF !important; 
     }
 
-    /* Başlık: Zarif Mor */
     .lilia-title { 
         color: #7D3C98 !important; 
         font-size: 34px !important; 
@@ -31,27 +29,26 @@ st.markdown("""
         font-family: serif !important;
     }
 
-    /* DOSYA YÜKLEME ALANI (Siyahlığı Bitiren Kısım) */
-    /* Dış çerçeve ve iç bölmeyi tek vücut yapıyoruz */
+    /* DOSYA YÜKLEME ALANI */
     [data-testid="stFileUploader"] section {
-        background-color: #FDFEFE !important; /* İç bölme bembeyaz */
-        border: 2px dashed #D2B4DE !important; /* Mor kesikli çizgi */
+        background-color: #FDFEFE !important; 
+        border: 2px dashed #D2B4DE !important; 
         border-radius: 15px !important;
         padding: 20px !important;
-        color: #4A235A !important; /* Yazılar koyu mor */
     }
 
-    /* "Browse files" yazan butonun siyah kalmaması için */
+    /* "Browse files" butonunu daha şık yapıyoruz */
     [data-testid="stFileUploader"] section button {
         background-color: #E8DAEF !important;
         color: #4A235A !important;
         border: 1px solid #7D3C98 !important;
+        border-radius: 10px !important;
     }
 
-    /* BUTON: Açık Lila, Büyük ve Net */
+    /* ANA DÜĞME: Günü Ölümsüzleştir */
     div.stButton > button {
-        background-color: #9B59B6 !important; /* Canlı bir lila */
-        color: #FFFFFF !important; /* Beyaz yazı */
+        background-color: #9B59B6 !important; 
+        color: #FFFFFF !important; 
         border: none !important;
         border-radius: 30px !important;
         width: 100% !important;
@@ -64,12 +61,6 @@ st.markdown("""
 
     div.stButton > button:hover {
         background-color: #AF7AC5 !important;
-        transform: scale(1.01) !important;
-    }
-    
-    /* Yükleme sırasındaki mesajların rengi */
-    .stSuccess, .stInfo, .stWarning {
-        color: #4A235A !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -78,7 +69,7 @@ st.markdown("""
 st.markdown('<div class="lilia-title">📸 Anılar Bulutta</div>', unsafe_allow_html=True)
 
 # --- 4. TEKNİK AYARLAR ---
-# Apps Script URL'ni buraya yapıştır
+# Apps Script URL'ni buraya yapıştırmayı unutma
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw9mHDx-NZJUhzKwRLRIpvXv9hEtp_RJztM1JOF6LViPvJMGB9qjXYMPttDMl72gAI/exec"
 
 def upload_to_drive_direct(file):
@@ -93,17 +84,19 @@ def upload_to_drive_direct(file):
     return response.text
 
 # --- 5. ARAYÜZ ---
-uploaded_files = st.file_uploader("Fotoğrafları seçin veya sürükleyin", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
+# Birinci Düğme İsmi Değişti: "Hatıraları Seç"
+uploaded_files = st.file_uploader("En Güzel Kareleri Seç", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
 
-if st.button("Fotoğrafları Arşive Gönder"):
+# İkinci Düğme İsmi Değişti: "Günü Ölümsüzleştir"
+if st.button("Günü Ölümsüzleştir"):
     if uploaded_files:
         progress_bar = st.progress(0)
         try:
             for i, uploaded_file in enumerate(uploaded_files):
                 result = upload_to_drive_direct(uploaded_file)
                 progress_bar.progress((i + 1) / len(uploaded_files))
-            st.success("Tüm fotoğraflar başarıyla arşive eklendi! 🎉")
+            st.success("Tüm anılar Lilia arşivine başarıyla eklendi! ✨")
         except Exception as e:
             st.error(f"Bir hata oluştu: {e}")
     else:
-        st.warning("Lütfen önce fotoğraf seçin.")
+        st.warning("Lütfen önce hatıraları seçin.")
