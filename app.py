@@ -9,47 +9,52 @@ st.set_page_config(
     page_icon="📸"
 )
 
-# --- 2. GÖRSEL TASARIM (CSS) ---
+# --- 2. GÖRSEL TASARIM (Zorlamalı CSS) ---
 st.markdown("""
 <style>
-    /* Sayfa içeriğini tepeden 5 satır kadar aşağı indiriyoruz */
+    /* Sayfa içeriğini tepeden iyice aşağı indiriyoruz */
     .block-container {
-        padding-top: 5rem;
+        padding-top: 8rem !important; /* 5'ten 8'e çıkardım, daha da aşağı iner */
     }
+    
     .stApp { 
-        background-color: #FFFFFF; 
-        color: #000000; 
-        font-family: serif; 
+        background-color: #FFFFFF !important; 
     }
+
+    /* Başlık Ayarı */
     .lilia-title { 
-        color: #7D3C98; 
-        font-size: 36px; 
-        font-weight: 700; 
-        text-align: center; 
-        margin-top: 20px; /* Başlığın üstüne ekstra boşluk */
-        margin-bottom: 40px;
+        color: #7D3C98 !important; 
+        font-size: 36px !important; 
+        font-weight: 700 !important; 
+        text-align: center !important; 
+        margin-bottom: 40px !important;
+        font-family: serif !important;
     }
-    /* Buton Tasarımı: Açık lila arka plan, koyu mor yazı */
-    .stButton>button { 
-        background-color: #E8DAEF; 
-        color: #4A235A; 
-        border: 2px solid #7D3C98; 
-        border-radius: 30px; 
-        width: 100%; 
-        padding: 15px;
-        font-weight: bold;
-        font-size: 20px;
-        transition: 0.3s;
+
+    /* BUTON: Siyah görünmemesi için çok açık bir lila ve zorlamalı komutlar */
+    div.stButton > button {
+        background-color: #E8DAEF !important; /* Çok açık lila */
+        color: #4A235A !important; /* Koyu mor yazı */
+        border: 2px solid #7D3C98 !important;
+        border-radius: 30px !important;
+        width: 100% !important;
+        padding: 15px !important;
+        font-weight: bold !important;
+        font-size: 20px !important;
+        display: block !important;
     }
-    .stButton>button:hover { 
-        background-color: #D2B4DE; 
-        color: #4A235A;
-        border-color: #4A235A;
+
+    /* Butonun üzerine gelince veya tıklayınca siyahlaşmaması için */
+    div.stButton > button:hover, div.stButton > button:active, div.stButton > button:focus {
+        background-color: #D2B4DE !important;
+        color: #4A235A !important;
+        border-color: #4A235A !important;
     }
-    /* Dosya yükleme alanı */
+
+    /* Dosya yükleme kutusunun siyah modda bozulmaması için */
     .stFileUploader {
-        border: 2px dashed #D2B4DE;
-        border-radius: 15px;
+        border: 2px dashed #D2B4DE !important;
+        background-color: #FDFEFE !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -58,7 +63,7 @@ st.markdown("""
 st.markdown('<div class="lilia-title">📸 Anılar Bulutta</div>', unsafe_allow_html=True)
 
 # --- 4. TEKNİK AYARLAR ---
-# Google Apps Script URL'ni buraya yapıştırmayı unutma
+# Apps Script URL'ni buraya tekrar yapıştırmayı unutma
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw9mHDx-NZJUhzKwRLRIpvXv9hEtp_RJztM1JOF6LViPvJMGB9qjXYMPttDMl72gAI/exec"
 
 def upload_to_drive_direct(file):
@@ -77,6 +82,7 @@ uploaded_files = st.file_uploader("Fotoğrafları seçin veya sürükleyin", typ
 
 st.write("") 
 
+# Butonu "primary" (ana) buton yapmıyoruz ki Streamlit'in kendi koyu renklerini dayatmasın
 if st.button("Fotoğrafları Arşive Gönder"):
     if uploaded_files:
         progress_bar = st.progress(0)
