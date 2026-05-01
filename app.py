@@ -9,52 +9,67 @@ st.set_page_config(
     page_icon="📸"
 )
 
-# --- 2. GÖRSEL TASARIM (Zorlamalı CSS) ---
+# --- 2. GÖRSEL TASARIM (KESİN ÇÖZÜM CSS) ---
 st.markdown("""
 <style>
-    /* Sayfa içeriğini tepeden iyice aşağı indiriyoruz */
+    /* Sayfayı aşağı kaydırıyoruz */
     .block-container {
-        padding-top: 8rem !important; /* 5'ten 8'e çıkardım, daha da aşağı iner */
+        padding-top: 6rem !important;
     }
     
     .stApp { 
         background-color: #FFFFFF !important; 
     }
 
-    /* Başlık Ayarı */
+    /* Başlık: Zarif Mor */
     .lilia-title { 
         color: #7D3C98 !important; 
-        font-size: 36px !important; 
+        font-size: 34px !important; 
         font-weight: 700 !important; 
         text-align: center !important; 
         margin-bottom: 40px !important;
         font-family: serif !important;
     }
 
-    /* BUTON: Siyah görünmemesi için çok açık bir lila ve zorlamalı komutlar */
+    /* DOSYA YÜKLEME ALANI (Siyahlığı Bitiren Kısım) */
+    /* Dış çerçeve ve iç bölmeyi tek vücut yapıyoruz */
+    [data-testid="stFileUploader"] section {
+        background-color: #FDFEFE !important; /* İç bölme bembeyaz */
+        border: 2px dashed #D2B4DE !important; /* Mor kesikli çizgi */
+        border-radius: 15px !important;
+        padding: 20px !important;
+        color: #4A235A !important; /* Yazılar koyu mor */
+    }
+
+    /* "Browse files" yazan butonun siyah kalmaması için */
+    [data-testid="stFileUploader"] section button {
+        background-color: #E8DAEF !important;
+        color: #4A235A !important;
+        border: 1px solid #7D3C98 !important;
+    }
+
+    /* BUTON: Açık Lila, Büyük ve Net */
     div.stButton > button {
-        background-color: #E8DAEF !important; /* Çok açık lila */
-        color: #4A235A !important; /* Koyu mor yazı */
-        border: 2px solid #7D3C98 !important;
+        background-color: #9B59B6 !important; /* Canlı bir lila */
+        color: #FFFFFF !important; /* Beyaz yazı */
+        border: none !important;
         border-radius: 30px !important;
         width: 100% !important;
-        padding: 15px !important;
+        padding: 18px !important;
         font-weight: bold !important;
-        font-size: 20px !important;
-        display: block !important;
+        font-size: 22px !important;
+        margin-top: 20px !important;
+        box-shadow: 0px 4px 15px rgba(155, 89, 182, 0.2) !important;
     }
 
-    /* Butonun üzerine gelince veya tıklayınca siyahlaşmaması için */
-    div.stButton > button:hover, div.stButton > button:active, div.stButton > button:focus {
-        background-color: #D2B4DE !important;
+    div.stButton > button:hover {
+        background-color: #AF7AC5 !important;
+        transform: scale(1.01) !important;
+    }
+    
+    /* Yükleme sırasındaki mesajların rengi */
+    .stSuccess, .stInfo, .stWarning {
         color: #4A235A !important;
-        border-color: #4A235A !important;
-    }
-
-    /* Dosya yükleme kutusunun siyah modda bozulmaması için */
-    .stFileUploader {
-        border: 2px dashed #D2B4DE !important;
-        background-color: #FDFEFE !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -63,7 +78,7 @@ st.markdown("""
 st.markdown('<div class="lilia-title">📸 Anılar Bulutta</div>', unsafe_allow_html=True)
 
 # --- 4. TEKNİK AYARLAR ---
-# Apps Script URL'ni buraya tekrar yapıştırmayı unutma
+# Apps Script URL'ni buraya yapıştır
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw9mHDx-NZJUhzKwRLRIpvXv9hEtp_RJztM1JOF6LViPvJMGB9qjXYMPttDMl72gAI/exec"
 
 def upload_to_drive_direct(file):
@@ -80,9 +95,6 @@ def upload_to_drive_direct(file):
 # --- 5. ARAYÜZ ---
 uploaded_files = st.file_uploader("Fotoğrafları seçin veya sürükleyin", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
 
-st.write("") 
-
-# Butonu "primary" (ana) buton yapmıyoruz ki Streamlit'in kendi koyu renklerini dayatmasın
 if st.button("Fotoğrafları Arşive Gönder"):
     if uploaded_files:
         progress_bar = st.progress(0)
