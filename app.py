@@ -9,7 +9,7 @@ st.set_page_config(
     page_icon="📸"
 )
 
-# --- 2. HAFIZA YÖNETİMİ (DOSYA TEMİZLEME İÇİN) ---
+# --- 2. HAFIZA YÖNETİMİ ---
 if 'uploader_key' not in st.session_state:
     st.session_state['uploader_key'] = 0
 
@@ -19,7 +19,7 @@ if 'success_message' not in st.session_state:
 # --- 3. GÖRSEL TASARIM (CSS) ---
 st.markdown("""
 <style>
-    .block-container { padding-top: 4rem !important; }
+    .block-container { padding-top: 3rem !important; }
     .stApp { background-color: #FFFFFF !important; }
 
     .lilia-title { 
@@ -27,7 +27,7 @@ st.markdown("""
         font-size: 34px !important; 
         font-weight: 700 !important; 
         text-align: center !important; 
-        margin-bottom: 20px !important;
+        margin-bottom: 10px !important;
         font-family: serif !important;
     }
 
@@ -55,17 +55,20 @@ st.markdown("""
         font-weight: bold !important;
         font-size: 22px !important;
         margin-top: 10px !important;
+        border: none !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 4. BAŞLIK VE DURUM BİLGİSİ ---
+# --- 4. BAŞLIK VE SABİT DURUM ALANI ---
 st.markdown('<div class="lilia-title">📸 Anılar Bulutta</div>', unsafe_allow_html=True)
 
-# Başarı mesajını en üstte göstermek için alan
+# BU ALAN KRİTİK: Yükleme barı ve mesajlar her zaman burada görünecek (En Üstte)
+top_status_placeholder = st.empty()
+
+# Eski bir başarı mesajı varsa göster
 if st.session_state['success_message']:
-    st.success(st.session_state['success_message'])
-    # Mesaj bir kez göründükten sonra hafızayı temizliyoruz ki sayfa her açıldığında çıkmasın
+    top_status_placeholder.success(st.session_state['success_message'])
     st.session_state['success_message'] = None
 
 # --- 5. TEKNİK AYARLAR ---
@@ -81,7 +84,6 @@ def upload_to_drive_direct(file):
     return response.text
 
 # --- 6. ARAYÜZ ---
-# 'key' kullanımı sayesinde dosyalar yüklendikten sonra bu alanı sıfırlayabileceğiz
 uploaded_files = st.file_uploader(
     "En Güzel Kareleri Seç", 
     type=['png', 'jpg', 'jpeg'], 
@@ -92,21 +94,23 @@ uploaded_files = st.file_uploader(
 
 if st.button("Günü Ölümsüzleştir"):
     if uploaded_files:
-        progress_bar = st.progress(0)
-        try:
-            for i, uploaded_file in enumerate(uploaded_files):
-                upload_to_drive_direct(uploaded_file)
-                progress_bar.progress((i + 1) / len(uploaded_files))
+        # Yükleme başladığında en üstteki boşluğu kullanıyoruz
+        with top_status_placeholder.container():
+            progress_bar = st.progress(0)
+            status_text = st.empty()
             
-            # --- DOSYALARI EKRANDAN KALDIRMA SİHİRİ ---
-            # Hafızadaki uploader anahtarını değiştiriyoruz (Bu, listeyi boşaltır)
-            st.session_state['uploader_key'] += 1
-            # Mesajı hafızaya alıyoruz
-            st.session_state['success_message'] = f"Harika! {len(uploaded_files)} hatıra Lilia arşivine eklendi. ✨"
-            # Sayfayı yeniliyoruz
-            st.rerun()
-            
-        except Exception as e:
-            st.error(f"Bir hata oluştu: {e}")
+            try:
+                for i, uploaded_file in enumerate(uploaded_files):
+                    status_text.info(f"Paylaşılıyor: {i+1} / {len(uploaded_files)}")
+                    upload_to_drive_direct(uploaded_file)
+                    progress_bar.progress((i + 1) / len(uploaded_files))
+                
+                # Temizlik ve Sıfırlama
+                st.session_state['uploader_key'] += 1
+                st.session_state['success_message'] = f"Harika! {len(uploaded_files)} hatıra Lilia arşivine eklendi. ✨"
+                st.rerun()
+                
+            except Exception as e:
+                st.error(f"Bir hata oluştu: {e}")
     else:
-        st.warning("Lütfen önce hatıraları seçin.")
+        top_status_placeholder.warning("Lütfen önce hatıraları seçin.")
