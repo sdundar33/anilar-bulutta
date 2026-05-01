@@ -9,16 +9,11 @@ st.set_page_config(
     page_icon="📸"
 )
 
-# --- 2. GÖRSEL TASARIM (CSS) ---
+# --- 2. GÖRSEL TASARIM (CSS HACK) ---
 st.markdown("""
 <style>
-    .block-container {
-        padding-top: 6rem !important;
-    }
-    
-    .stApp { 
-        background-color: #FFFFFF !important; 
-    }
+    .block-container { padding-top: 6rem !important; }
+    .stApp { background-color: #FFFFFF !important; }
 
     .lilia-title { 
         color: #7D3C98 !important; 
@@ -29,7 +24,19 @@ st.markdown("""
         font-family: serif !important;
     }
 
-    /* DOSYA YÜKLEME ALANI */
+    /* DOSYA SEÇME BUTONU METNİNİ DEĞİŞTİRME (HACK) */
+    /* Mevcut "Browse files" yazısını görünmez yapıyoruz */
+    [data-testid="stFileUploader"] section button span {
+        display: none !important;
+    }
+    
+    /* Yerine "Hatıraları Seç" yazısını koyuyoruz */
+    [data-testid="stFileUploader"] section button::after {
+        content: "Hatıraları Seç" !important;
+        visibility: visible !important;
+        display: block !important;
+    }
+
     [data-testid="stFileUploader"] section {
         background-color: #FDFEFE !important; 
         border: 2px dashed #D2B4DE !important; 
@@ -37,12 +44,13 @@ st.markdown("""
         padding: 20px !important;
     }
 
-    /* "Browse files" butonunu daha şık yapıyoruz */
+    /* Seçme butonu tasarımı */
     [data-testid="stFileUploader"] section button {
         background-color: #E8DAEF !important;
         color: #4A235A !important;
         border: 1px solid #7D3C98 !important;
         border-radius: 10px !important;
+        padding: 5px 15px !important;
     }
 
     /* ANA DÜĞME: Günü Ölümsüzleştir */
@@ -84,10 +92,9 @@ def upload_to_drive_direct(file):
     return response.text
 
 # --- 5. ARAYÜZ ---
-# Birinci Düğme İsmi Değişti: "Hatıraları Seç"
-uploaded_files = st.file_uploader("En Güzel Kareleri Seç", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
+# Buradaki yazı sadece kutunun üstünde görünür
+uploaded_files = st.file_uploader("En Güzel Kareleri Seç", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True, label_visibility="collapsed")
 
-# İkinci Düğme İsmi Değişti: "Günü Ölümsüzleştir"
 if st.button("Günü Ölümsüzleştir"):
     if uploaded_files:
         progress_bar = st.progress(0)
