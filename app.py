@@ -51,7 +51,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # Üst Görsel (Lilia Logosu ve Kuş Figürü)
-#st.image("https://raw.githubusercontent.com/username/repo/main/image_0.png", use_column_width=True) # Buraya depondaki görselin ham linkini koyabilirsin
+st.image("https://raw.githubusercontent.com/username/repo/main/logo.jpg", use_column_width=True) # Buraya depondaki görselin ham linkini koyabilirsin
 
 st.markdown('<p class="lilia-header">LILIA EVENT GARDEN</p>', unsafe_allow_html=True)
 st.markdown('<p class="lilia-subheader">Anılar Bulutta: En güzel karelerinizi bizimle paylaşın.</p>', unsafe_allow_html=True)
