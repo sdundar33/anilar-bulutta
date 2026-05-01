@@ -30,7 +30,7 @@ col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     # Dosya adının GitHub'dakiyle aynı (logo.jpg) olduğundan emin ol
     if os.path.exists("logo.jpg"):
-        st.image("logo.jpg", width=250)
+        st.image("logo.jpg", width=150)
     else:
         # Logo bulunamazsa hata vermek yerine şık bir yazı basar
         st.markdown('<div class="lilia-title">Lilia Event Garden</div>', unsafe_allow_html=True)
