@@ -4,7 +4,7 @@ import base64
 
 # --- 1. SAYFA AYARLARI ---
 st.set_page_config(
-    page_title="Lilia Event Garden | Anı Kumbarası",
+    page_title="Lilia Event Garden | Lilia Anı Kumbarası",
     layout="centered",
     page_icon="📸"
 )
@@ -31,7 +31,6 @@ st.markdown("""
         font-family: serif !important;
     }
     
-    /* Davet Metni Tasarımı */
     .lilia-description {
         color: #4A235A !important;
         font-size: 18px !important;
@@ -67,14 +66,14 @@ st.markdown("""
         font-size: 22px !important;
         margin-top: 10px !important;
         border: none !important;
+        box-shadow: 0px 4px 15px rgba(155, 89, 182, 0.2) !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # --- 4. BAŞLIK VE DAVET METNİ ---
-st.markdown('<div class="lilia-title">📸 Anı Kumbarası</div>', unsafe_allow_html=True)
+st.markdown('<div class="lilia-title">📸 Lilia Anı Kumbarası</div>', unsafe_allow_html=True)
 
-# İnsanları harekete geçirecek samimi açıklama
 st.markdown("""
 <div class="lilia-description">
     "Her kare bir hikaye anlatır. Lilia'da bu akşamın hikayesini birlikte yazmaya ne dersiniz? 
@@ -82,7 +81,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Sabit Durum Alanı (Yükleme barı için)
+# Sabit Durum Alanı
 top_status_placeholder = st.empty()
 
 if st.session_state['success_message']:
@@ -118,12 +117,12 @@ if st.button("Günü Ölümsüzleştir"):
             
             try:
                 for i, uploaded_file in enumerate(uploaded_files):
-                    status_text.info(f"Kumbaraya Ekleniyor: {i+1} / {len(uploaded_files)}")
+                    status_text.info(f"Lilia Kumbarasına Ekleniyor: {i+1} / {len(uploaded_files)}")
                     upload_to_drive_direct(uploaded_file)
                     progress_bar.progress((i + 1) / len(uploaded_files))
                 
                 st.session_state['uploader_key'] += 1
-                st.session_state['success_message'] = f"Harika! {len(uploaded_files)} yeni anı kumbarada yerini aldı. ✨"
+                st.session_state['success_message'] = f"Harika! {len(uploaded_files)} yeni anı Lilia kumbarasında yerini aldı. ✨"
                 st.rerun()
                 
             except Exception as e:
