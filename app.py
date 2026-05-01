@@ -1,11 +1,8 @@
 import streamlit as st
-from googleapiclient.discovery import build
-from google.oauth2 import service_account
-from googleapiclient.http import MediaIoBaseUpload
-import io
-import json
+import requests
+import base64
 
-# Sayfa Ayarları (Vitrin tasarımı)
+# Sayfa Ayarları
 st.set_page_config(page_title="Lilia - Anılar Bulutta", layout="centered", page_icon="📸")
 
 st.markdown("""
@@ -15,42 +12,37 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Google Drive Bağlantısı (Arka planda çalışacak güvenlik kısmı)
-@st.cache_resource
-def get_drive_service():
-    # Streamlit Secrets'dan anahtarı al
-    secrets_dict = st.secrets["gcp_service_account"]
-    credentials = service_account.Credentials.from_service_account_info(
-        secrets_dict,
-        scopes=['https://www.googleapis.com/auth/drive']
-    )
-    return build('drive', 'v3', credentials=credentials)
+# 1. Adımda kopyaladığın o uzun linki buradaki tırnakların içine yapıştır:
+WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw9mHDx-NZJUhzKwRLRIpvXv9hEtp_RJztM1JOF6LViPvJMGB9qjXYMPttDMl72gAI/exec"
 
-# Yükleme Fonksiyonu
-def upload_to_drive(file, folder_id):
-    service = get_drive_service()
-    file_metadata = {
-        'name': file.name,
-        'parents': [folder_id]
+def upload_to_drive_direct(file):
+    file_bytes = file.read()
+    encoded_file = base64.b64encode(file_bytes).decode("utf-8")
+    
+    payload = {
+        "fileName": file.name,
+        "mimeType": file.type,
+        "fileData": encoded_file
     }
-    media = MediaIoBaseUpload(io.BytesIO(file.read()), mimetype=file.type)
-    file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
-    return file.get('id')
-
-# --- ÖNEMLİ: Kendi Klasör ID'ni buraya yapıştır ---
-FOLDER_ID = "1XDsbMMY_40xMOT-ujkXb4NOkLjjNXIVi"
+    
+    # Doğrudan senin Drive arka kapına gönderiyoruz
+    response = requests.post(WEB_APP_URL, data=payload)
+    return response.text
 
 # Dosya Yükleme Arayüzü
 uploaded_files = st.file_uploader("Fotoğrafları seçmek için tıklayın veya buraya sürükleyin", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
 
 if st.button("Seçilen Fotoğrafları Yükle", type="primary"):
     if uploaded_files:
-        with st.spinner('Fotoğraflar yükleniyor, lütfen bekleyin...'):
+        with st.spinner('Fotoğraflar buluta aktarılıyor, lütfen bekleyin...'):
             try:
                 for uploaded_file in uploaded_files:
-                    upload_to_drive(uploaded_file, FOLDER_ID)
+                    result = upload_to_drive_direct(uploaded_file)
+                    if "Hata" in result:
+                        st.error(f"Dosya yüklenirken bir sorun oluştu: {result}")
+                    
                 st.success("Tüm fotoğraflar başarıyla Lilia arşivine eklendi! Teşekkür ederiz. 🎉")
             except Exception as e:
-                st.error(f"Bir hata oluştu: {e}")
+                st.error(f"Sistemsel bir hata oluştu: {e}")
     else:
         st.warning("Lütfen önce fotoğraf seçin.")
