@@ -24,11 +24,22 @@ st.markdown("""
 
     .lilia-title { 
         color: #7D3C98 !important; 
-        font-size: 34px !important; 
+        font-size: 38px !important; 
         font-weight: 700 !important; 
         text-align: center !important; 
-        margin-bottom: 10px !important;
+        margin-bottom: 5px !important;
         font-family: serif !important;
+    }
+    
+    /* Davet Metni Tasarımı */
+    .lilia-description {
+        color: #4A235A !important;
+        font-size: 18px !important;
+        text-align: center !important;
+        font-style: italic !important;
+        margin-bottom: 30px !important;
+        padding: 0 20px !important;
+        line-height: 1.6 !important;
     }
 
     /* DOSYA SEÇME BUTONU HACK */
@@ -45,7 +56,7 @@ st.markdown("""
         border-radius: 15px !important;
     }
 
-    /* ANA DÜĞME: Günü Ölümsüzleştir */
+    /* ANA DÜĞME */
     div.stButton > button {
         background-color: #9B59B6 !important; 
         color: #FFFFFF !important; 
@@ -56,24 +67,29 @@ st.markdown("""
         font-size: 22px !important;
         margin-top: 10px !important;
         border: none !important;
-        box-shadow: 0px 4px 15px rgba(155, 89, 182, 0.2) !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 4. BAŞLIK VE SABİT DURUM ALANI ---
+# --- 4. BAŞLIK VE DAVET METNİ ---
 st.markdown('<div class="lilia-title">📸 Anı Kumbarası</div>', unsafe_allow_html=True)
 
-# Durum mesajları ve yükleme barı her zaman burada (En Üstte) görünecek
+# İnsanları harekete geçirecek samimi açıklama
+st.markdown("""
+<div class="lilia-description">
+    "Her kare bir hikaye anlatır. Lilia'da bu akşamın hikayesini birlikte yazmaya ne dersiniz? 
+    Kendi vizörünüzden süzülen en güzel anları kumbaramıza bırakın, bu geceyi sonsuza dek ortak hafızamızda yaşatalım."
+</div>
+""", unsafe_allow_html=True)
+
+# Sabit Durum Alanı (Yükleme barı için)
 top_status_placeholder = st.empty()
 
-# Başarı mesajı varsa göster
 if st.session_state['success_message']:
     top_status_placeholder.success(st.session_state['success_message'])
     st.session_state['success_message'] = None
 
 # --- 5. TEKNİK AYARLAR ---
-# Buraya Google Apps Script URL'ni yapıştır
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw9mHDx-NZJUhzKwRLRIpvXv9hEtp_RJztM1JOF6LViPvJMGB9qjXYMPttDMl72gAI/exec"
 
 def upload_to_drive_direct(file):
@@ -87,7 +103,7 @@ def upload_to_drive_direct(file):
 
 # --- 6. ARAYÜZ ---
 uploaded_files = st.file_uploader(
-    "En Güzel Kareleri Seç", 
+    "Hatıraları Seç", 
     type=['png', 'jpg', 'jpeg'], 
     accept_multiple_files=True, 
     label_visibility="collapsed",
@@ -106,7 +122,6 @@ if st.button("Günü Ölümsüzleştir"):
                     upload_to_drive_direct(uploaded_file)
                     progress_bar.progress((i + 1) / len(uploaded_files))
                 
-                # Temizlik: Listeyi sıfırla ve başarı mesajını ayarla
                 st.session_state['uploader_key'] += 1
                 st.session_state['success_message'] = f"Harika! {len(uploaded_files)} yeni anı kumbarada yerini aldı. ✨"
                 st.rerun()
