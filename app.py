@@ -4,7 +4,7 @@ import base64
 
 # --- 1. SAYFA AYARLARI ---
 st.set_page_config(
-    page_title="Lilia Event Garden | Anılar Bulutta",
+    page_title="Lilia Event Garden | Anı Kumbarası",
     layout="centered",
     page_icon="📸"
 )
@@ -45,7 +45,7 @@ st.markdown("""
         border-radius: 15px !important;
     }
 
-    /* ANA DÜĞME */
+    /* ANA DÜĞME: Günü Ölümsüzleştir */
     div.stButton > button {
         background-color: #9B59B6 !important; 
         color: #FFFFFF !important; 
@@ -56,22 +56,24 @@ st.markdown("""
         font-size: 22px !important;
         margin-top: 10px !important;
         border: none !important;
+        box-shadow: 0px 4px 15px rgba(155, 89, 182, 0.2) !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # --- 4. BAŞLIK VE SABİT DURUM ALANI ---
-st.markdown('<div class="lilia-title">📸 Anılar Bulutta</div>', unsafe_allow_html=True)
+st.markdown('<div class="lilia-title">📸 Anı Kumbarası</div>', unsafe_allow_html=True)
 
-# BU ALAN KRİTİK: Yükleme barı ve mesajlar her zaman burada görünecek (En Üstte)
+# Durum mesajları ve yükleme barı her zaman burada (En Üstte) görünecek
 top_status_placeholder = st.empty()
 
-# Eski bir başarı mesajı varsa göster
+# Başarı mesajı varsa göster
 if st.session_state['success_message']:
     top_status_placeholder.success(st.session_state['success_message'])
     st.session_state['success_message'] = None
 
 # --- 5. TEKNİK AYARLAR ---
+# Buraya Google Apps Script URL'ni yapıştır
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw9mHDx-NZJUhzKwRLRIpvXv9hEtp_RJztM1JOF6LViPvJMGB9qjXYMPttDMl72gAI/exec"
 
 def upload_to_drive_direct(file):
@@ -94,20 +96,19 @@ uploaded_files = st.file_uploader(
 
 if st.button("Günü Ölümsüzleştir"):
     if uploaded_files:
-        # Yükleme başladığında en üstteki boşluğu kullanıyoruz
         with top_status_placeholder.container():
             progress_bar = st.progress(0)
             status_text = st.empty()
             
             try:
                 for i, uploaded_file in enumerate(uploaded_files):
-                    status_text.info(f"Paylaşılıyor: {i+1} / {len(uploaded_files)}")
+                    status_text.info(f"Kumbaraya Ekleniyor: {i+1} / {len(uploaded_files)}")
                     upload_to_drive_direct(uploaded_file)
                     progress_bar.progress((i + 1) / len(uploaded_files))
                 
-                # Temizlik ve Sıfırlama
+                # Temizlik: Listeyi sıfırla ve başarı mesajını ayarla
                 st.session_state['uploader_key'] += 1
-                st.session_state['success_message'] = f"Harika! {len(uploaded_files)} hatıra Lilia arşivine eklendi. ✨"
+                st.session_state['success_message'] = f"Harika! {len(uploaded_files)} yeni anı kumbarada yerini aldı. ✨"
                 st.rerun()
                 
             except Exception as e:
