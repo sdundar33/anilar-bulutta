@@ -51,7 +51,20 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # Üst Görsel (Lilia Logosu ve Kuş Figürü)
-st.image("https://github.com/sdundar33/anilar-bulutta/blob/main/logo.jpg", use_column_width=True) # Buraya depondaki görselin ham linkini koyabilirsin
+import os
+
+# Tasarımın en üstünde logonun görünmesi gereken yer
+st.markdown("---") # Görsel bir ayraç
+
+if os.path.exists("logo.jpg"):
+    st.image("logo.jpg", use_column_width=True)
+else:
+    st.error("⚠️ Lilia Logosu Bulunamadı!")
+    st.info("Şu an klasörde olan dosyalar şunlar:")
+    # Bu satır klasördeki her şeyi ekrana yazar, hatayı görmemizi sağlar
+    st.write(os.listdir()) 
+
+st.markdown("---")
 
 st.markdown('<p class="lilia-header">LILIA EVENT GARDEN</p>', unsafe_allow_html=True)
 st.markdown('<p class="lilia-subheader">Anılar Bulutta: En güzel karelerinizi bizimle paylaşın.</p>', unsafe_allow_html=True)
