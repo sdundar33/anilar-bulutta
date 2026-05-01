@@ -13,32 +13,55 @@ st.set_page_config(
 # --- 2. GÖRSEL TASARIM (CSS) ---
 st.markdown("""
 <style>
-    .stApp { background-color: #FFFFFF; color: #000000; font-family: serif; }
-    .lilia-title { color: #7C4C9F; font-size: 36px; font-weight: 700; text-align: center; }
-    .stButton>button { 
-        background-color: #7C4C9F; color: white; border-radius: 20px; 
-        width: 100%; transition: 0.3s;
+    /* Uygulamanın en üstündeki boşluğu sıfırlıyoruz */
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
     }
-    .stButton>button:hover { background-color: #36689D; }
+    .stApp { 
+        background-color: #FFFFFF; 
+        color: #000000; 
+        font-family: serif; 
+    }
+    .lilia-title { 
+        color: #7C4C9F; 
+        font-size: 28px; 
+        font-weight: 700; 
+        text-align: center; 
+        margin-top: 5px;
+    }
+    .stButton>button { 
+        background-color: #9B59B6; 
+        color: white; 
+        border-radius: 25px; 
+        border: none;
+        width: 100%; 
+        padding: 12px;
+        font-weight: bold;
+        transition: 0.4s;
+    }
+    .stButton>button:hover { 
+        background-color: #AF7AC5; 
+        transform: scale(1.02);
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. LOGO ALANI (Hatanın Çözüldüğü Yer) ---
-# Logoyu merkeze almak için 3 sütun oluşturuyoruz
-col1, col2, col3 = st.columns([1, 2, 1])
+# --- 3. LOGO ALANI (Yukarı Taşınmış ve Küçültülmüş) ---
+# Logoyu tam merkeze ve en yukarıya alıyoruz
+col1, col2, col3 = st.columns([2, 1, 2]) # Orta sütunu daha daralttık ki 80px tam ortalansın
 
 with col2:
-    # Dosya adının GitHub'dakiyle aynı (logo.jpg) olduğundan emin ol
     if os.path.exists("logo.jpg"):
+        # Boyutu 80'e çektik
         st.image("logo.jpg", width=80)
     else:
-        # Logo bulunamazsa hata vermek yerine şık bir yazı basar
-        st.markdown('<div class="lilia-title">Lilia Event Garden</div>', unsafe_allow_html=True)
+        st.markdown('<h4 style="text-align: center; color: #7C4C9F;">Lilia</h4>', unsafe_allow_html=True)
 
 st.markdown('<div class="lilia-title">📸 Anılar Bulutta</div>', unsafe_allow_html=True)
 
 # --- 4. TEKNİK AYARLAR ---
-# Buraya Google Apps Script'ten aldığın linki yapıştır
+# Buraya Google Apps Script'ten aldığın linki tekrar yapıştırmayı unutma
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw9mHDx-NZJUhzKwRLRIpvXv9hEtp_RJztM1JOF6LViPvJMGB9qjXYMPttDMl72gAI/exec"
 
 def upload_to_drive_direct(file):
