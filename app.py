@@ -1,83 +1,44 @@
 import streamlit as st
 import requests
 import base64
+import os
 
-# --- TASARIM VE SAYFA AYARLARI ---
+# --- 1. SAYFA AYARLARI ---
 st.set_page_config(
     page_title="Lilia Event Garden | Anılar Bulutta",
     layout="centered",
     page_icon="📸"
 )
 
-# Lilia Kurumsal Renkleri (Görselden Alındı)
-LILIA_PURPLE = "#7C4C9F" # Logodaki mor
-LILIA_BLUE = "#36689D"   # Kuşun kanatlarındaki mavi
-
-# CSS ile Görsel Düzenleme
-st.markdown(f"""
+# --- 2. GÖRSEL TASARIM (CSS) ---
+st.markdown("""
 <style>
-    .stApp {{
-        background-color: #FFFFFF;
-    }}
-    .lilia-header {{
-        color: {LILIA_PURPLE};
-        font-family: 'serif';
-        text-align: center;
-        font-size: 42px;
-        font-weight: bold;
-        margin-bottom: 0px;
-    }}
-    .lilia-subheader {{
-        color: #333333;
-        text-align: center;
-        font-size: 18px;
-        margin-bottom: 30px;
-    }}
-    .stButton>button {{
-        background-color: {LILIA_PURPLE};
-        color: white;
-        border-radius: 25px;
-        width: 100%;
-        height: 50px;
-        border: none;
-        font-weight: bold;
-        transition: 0.3s;
-    }}
-    .stButton>button:hover {{
-        background-color: {LILIA_BLUE};
-        border-color: {LILIA_BLUE};
-    }}
+    .stApp { background-color: #FFFFFF; color: #000000; font-family: serif; }
+    .lilia-title { color: #7C4C9F; font-size: 36px; font-weight: 700; text-align: center; }
+    .stButton>button { 
+        background-color: #7C4C9F; color: white; border-radius: 20px; 
+        width: 100%; transition: 0.3s;
+    }
+    .stButton>button:hover { background-color: #36689D; }
 </style>
 """, unsafe_allow_html=True)
 
-# Üst Görsel (Lilia Logosu ve Kuş Figürü)
-import os
+# --- 3. LOGO ALANI (Hatanın Çözüldüğü Yer) ---
+# Logoyu merkeze almak için 3 sütun oluşturuyoruz
+col1, col2, col3 = st.columns([1, 2, 1])
 
-# Tasarımın en üstünde logonun görünmesi gereken yer
-st.markdown("---") # Görsel bir ayraç
-
-if os.path.exists("logo.jpg"):
-   # Sadece bu bloğu kullan
-col1, col2, col3 = st.columns([1, 2, 1]) # Ekranı 3'e böler: Yanlar dar, orta geniş
-
-with col2: # Logoyu tam ortaya yerleştirir
+with col2:
+    # Dosya adının GitHub'dakiyle aynı (logo.jpg) olduğundan emin ol
     if os.path.exists("logo.jpg"):
-        # width=250 idealdir, çok büyük gelirse 200 yapabilirsin
-        st.image("logo.jpg", width=250) 
+        st.image("logo.jpg", width=250)
     else:
-        st.markdown('<h2 style="text-align: center; color: #7C4C9F;">Lilia Event Garden</h2>', unsafe_allow_html=True)
-else:
-    st.error("⚠️ Lilia Logosu Bulunamadı!")
-    st.info("Şu an klasörde olan dosyalar şunlar:")
-    # Bu satır klasördeki her şeyi ekrana yazar, hatayı görmemizi sağlar
-    st.write(os.listdir()) 
+        # Logo bulunamazsa hata vermek yerine şık bir yazı basar
+        st.markdown('<div class="lilia-title">Lilia Event Garden</div>', unsafe_allow_html=True)
 
-st.markdown("---")
+st.markdown('<div class="lilia-title">📸 Anılar Bulutta</div>', unsafe_allow_html=True)
 
-st.markdown('<p class="lilia-header">LILIA EVENT GARDEN</p>', unsafe_allow_html=True)
-st.markdown('<p class="lilia-subheader">Anılar Bulutta: En güzel karelerinizi bizimle paylaşın.</p>', unsafe_allow_html=True)
-
-# --- FONKSİYONEL KISIM (DEĞİŞTİRME) ---
+# --- 4. TEKNİK AYARLAR ---
+# Buraya Google Apps Script'ten aldığın linki yapıştır
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw9mHDx-NZJUhzKwRLRIpvXv9hEtp_RJztM1JOF6LViPvJMGB9qjXYMPttDMl72gAI/exec"
 
 def upload_to_drive_direct(file):
@@ -91,17 +52,18 @@ def upload_to_drive_direct(file):
     response = requests.post(WEB_APP_URL, data=payload)
     return response.text
 
-# Yükleme Alanı
-uploaded_files = st.file_uploader("", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
+# --- 5. YÜKLEME ARAYÜZÜ ---
+uploaded_files = st.file_uploader("Fotoğrafları seçin veya sürükleyin", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
 
-if st.button("LİLİA ARŞİVİNE GÖNDER"):
+if st.button("Lilia Arşivine Ekle"):
     if uploaded_files:
-        with st.spinner('Fotoğraflarınız yükleniyor...'):
-            try:
-                for uploaded_file in uploaded_files:
-                    upload_to_drive_direct(uploaded_file)
-                st.success("Tüm anılarınız başarıyla kaydedildi. Teşekkür ederiz! 🎉")
-            except Exception as e:
-                st.error(f"Bir hata oluştu: {e}")
+        progress_bar = st.progress(0)
+        try:
+            for i, uploaded_file in enumerate(uploaded_files):
+                result = upload_to_drive_direct(uploaded_file)
+                progress_bar.progress((i + 1) / len(uploaded_files))
+            st.success("Tüm fotoğraflar başarıyla Lilia arşivine eklendi! 🎉")
+        except Exception as e:
+            st.error(f"Bir hata oluştu: {e}")
     else:
-        st.warning("Lütfen önce bir dosya seçin.")
+        st.warning("Lütfen önce fotoğraf seçin.")
