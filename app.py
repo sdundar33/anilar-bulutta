@@ -57,7 +57,15 @@ import os
 st.markdown("---") # Görsel bir ayraç
 
 if os.path.exists("logo.jpg"):
-    st.image("logo.jpg", use_column_width=True)
+   # Sadece bu bloğu kullan
+col1, col2, col3 = st.columns([1, 2, 1]) # Ekranı 3'e böler: Yanlar dar, orta geniş
+
+with col2: # Logoyu tam ortaya yerleştirir
+    if os.path.exists("logo.jpg"):
+        # width=250 idealdir, çok büyük gelirse 200 yapabilirsin
+        st.image("logo.jpg", width=250) 
+    else:
+        st.markdown('<h2 style="text-align: center; color: #7C4C9F;">Lilia Event Garden</h2>', unsafe_allow_html=True)
 else:
     st.error("⚠️ Lilia Logosu Bulunamadı!")
     st.info("Şu an klasörde olan dosyalar şunlar:")
